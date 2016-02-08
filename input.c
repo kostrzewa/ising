@@ -115,7 +115,7 @@ void parse_args(int argc, char** argv, input_t * const setup){
 
 void usage() {
   printf("'ising' command line arguments\n");
-  printf("./ising -L<L> -J<J> -T<T> -a<a> -n<n> [-t<t>] [-s<s>] [-c] [-v]\n");
+  printf("./ising -L<L> -J<J> -T<T> -a<a> -n<n> [-t<t>] [-s<s>] [-c] [-v] [-e] [-i]\n");
   printf("MANDATORY ARGUMENTS\n");
   printf("<L> lattize size [integer]\n");
   printf("<J> spin coupling [decimal]\n");
@@ -127,5 +127,7 @@ void usage() {
   printf("<s> RNG seed [integer]\n");
   printf("-c cold start (all spins aligned)\n");
   printf("-v enable visualisation (and slow down simulation)\n");
+  printf("-e enable plotting of energy history in visualisation\n");
+  printf("-i interactively iterate through simulation (when visualisation is enabled)\n");
 }
  
