@@ -37,13 +37,15 @@ void parse_args(int argc, char** argv, input_t * const setup){
   setup->nsweeps = 0;
   setup->ntherm = 0;
   setup->visual = 0;
+  setup->plotenergy = 0;
   setup->coldstart = 0;
+  setup->iterate = 0;
 
   int c;
   // if you have never worked with getopt, the argument value is written into
   // the global string 'optarg' managed by getopt
   // an argument followed with a colon has a value, otherwise it's just a flag
-  while((c = getopt(argc, argv, "h?vcJ:L:T:a:t:n:s:")) != -1) {
+  while((c = getopt(argc, argv, "h?vceiJ:L:T:a:t:n:s:")) != -1) {
     switch(c) {
       case 'L':
         setup->L = atoi(optarg);
@@ -71,6 +73,12 @@ void parse_args(int argc, char** argv, input_t * const setup){
         break;
       case 'v':
         setup->visual = 1;
+        break;
+      case 'e':
+        setup->plotenergy = 1;
+        break;
+      case 'i':
+        setup->iterate = 1;
         break;
       case 'c':
         setup->coldstart = 1;

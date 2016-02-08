@@ -78,11 +78,17 @@ int main(int argc, char** argv) {
     if(setup.visual==1){
       clear();
       drawconf(&lat);
-      plotenergy(eperspin,&lat);
+      if(setup.plotenergy==1) plotenergy(eperspin,&lat);
       move(0,0);
-      printw("Temperature: %.4e  Sweep: %d  Energy per spin: %.4e  Magnetisation: %.4e",lat.temp,n,eperspin,fabs(magnetisation));
+      printw("Temperature: %.4e  Sweep: %d  Energy per spin: %.4e",lat.temp,n,eperspin);
+      move(1,0);
+      printw("Magnetisation: %.4e",fabs(magnetisation));
       refresh();
-      usleep(20000);
+      if(setup.iterate==1){
+        getch();
+      } else {
+        usleep(20000);
+      }
     }
     if(setup.algo == 's' && n == setup.ntherm && setup.visual == 1) getch();
     //if(setup->algo && n > ntherm){

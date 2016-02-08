@@ -33,6 +33,8 @@ typedef struct input_t {
   int visual;
   int seed;
   int coldstart;
+  int plotenergy;
+  int iterate;
 } input_t; 
 
 #include "lattice.h"
