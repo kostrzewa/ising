@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
   int sweepsize;
   for(int n = 0; n < setup.nsweeps; ++n){
     sweepsize = lat.sweep(&lat);
-    eperspin = H(&lat)/(2*lat.Lsq);
+    eperspin = H(&lat)/(lat.Lsq);
     magnetisation = M(&lat);
    
     fprintf(ofile,"%012d %.10e %.10e %012d\n",n,eperspin,fabs(magnetisation),sweepsize);

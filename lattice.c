@@ -31,17 +31,17 @@
 #include "input.h"
 
 // inline functions in the hope of increasing speed
-extern inline void shiftm(const int in, int * const out);
+extern inline void shiftm(const int in, int * const out, const lattice_t * const lat);
 extern inline void shiftp(const int in, int * const out, const lattice_t * const lat);
 
 double H(const lattice_t * const lat){
   int h = 0;
   int xm1, xp1, ym1, yp1;
   for(int x = 0; x < lat->L; ++x){
-    shiftm(x,&xm1);
+    shiftm(x,&xm1,lat);
     shiftp(x,&xp1,lat);
     for(int y = 0; y < lat->L; ++y){
-      shiftm(y,&ym1);
+      shiftm(y,&ym1,lat);
       shiftp(y,&yp1,lat);
       h += lat->spins[x][y] * ( lat->spins[xm1][y] + lat->spins[xp1][y] + lat->spins[x][ym1] + lat->spins[x][yp1] );
     }
@@ -60,8 +60,8 @@ double M(const lattice_t * const lat){
 
 double singleflip_deltaH(const int xflip, const int yflip, const lattice_t * const lat){
   int xm1, xp1, ym1, yp1;
-  shiftm( xflip, &xm1 );
-  shiftm( yflip, &ym1 );
+  shiftm( xflip, &xm1, lat );
+  shiftm( yflip, &ym1, lat );
   shiftp( xflip, &xp1, lat );
   shiftp( yflip, &yp1, lat );
   // change of energy is -2 * (initial energy of spin pairs which include spin to be flipped)

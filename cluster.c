@@ -67,8 +67,8 @@ void check_neighbours(const int x, const int y, lattice_t * const lat){
   neighbour_t n[4];
   int xm1, xp1, ym1, yp1;
   double test;
-  shiftm(x,&xm1);
-  shiftm(y,&ym1);
+  shiftm(x,&xm1,lat);
+  shiftm(y,&ym1,lat);
   shiftp(x,&xp1,lat);
   shiftp(y,&yp1,lat);
  

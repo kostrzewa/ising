@@ -51,9 +51,9 @@ double M(const lattice_t * const lat);
 
 double singleflip_deltaH(const int xflip, const int yflip, const lattice_t * const lat);
 
-inline void shiftm(const int in, int * const out){
+inline void shiftm(const int in, int * const out, const lattice_t * const lat){
   *out = in - 1;
-  *out = *out < 1 ? 0 : *out;
+  *out = *out < 0 ? (lat->L-1) : *out;
 }
 
 inline void shiftp(const int in, int * const out, const lattice_t * const lat){
