@@ -85,6 +85,8 @@ void check_neighbours(const int x, const int y, lattice_t * const lat){
       ranlxd(&test,1);
       if( (1.0-exp(-2*lat->J/lat->temp)) > test ){
         lat->cluster[ n[i].x ][ n[i].y ] = CLUSTER_RECURSE;
+      } else {
+        lat->cluster[ n[i].x ][ n[i].y ] = CLUSTER_CHECKED;
       }
     } 
   }
