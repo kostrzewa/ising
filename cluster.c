@@ -80,13 +80,11 @@ void check_neighbours(const int x, const int y, lattice_t * const lat){
   // iterate over neighbours
   for(int i = 0; i < 4; ++i){
     // if a neighbour has not yet been visited, see if it is parallel
-    if( lat->cluster[ n[i].x ][ n[i].y ] == CLUSTER_UNCHECKED && lat->spins[ n[i].x ][ n[i].y ] == lat->spins[x][y] ){
+    if( lat->cluster[ n[i].x ][ n[i].y ] == CLUSTER_UNCHECKED ){
       // and add with Wolff probability
       ranlxd(&test,1);
-      if( (1.0-exp(-2*lat->J/lat->temp)) > test ){
+      if( lat->spins[ n[i].x ][ n[i].y ] == lat->spins[x][y] && (1.0-exp(-2*lat->J/lat->temp)) > test ){
         lat->cluster[ n[i].x ][ n[i].y ] = CLUSTER_RECURSE;
-      } else {
-        lat->cluster[ n[i].x ][ n[i].y ] = CLUSTER_CHECKED;
       }
     } 
   }

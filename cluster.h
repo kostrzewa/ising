@@ -32,7 +32,6 @@ typedef struct neighbour_t {
 
 typedef enum cluster_state_t {
   CLUSTER_UNCHECKED=0,
-  CLUSTER_CHECKED,
   CLUSTER_RECURSE,
   CLUSTER_FLIP 
 } cluster_state_t;
