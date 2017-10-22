@@ -1,1 +1,6 @@
 simulation code for 2D Ising model written for Computational Physics tutorials WS2015/2016, University of Bonn
+
+ising_mc   - is a Metropolis and Cluster Monte-Carlo
+ising_sym  - is a visual and numerical check of the lattice symmetries of the Ising Hamiltonian
+
+running instructions are provided by executing the programs without arguments
