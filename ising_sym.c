@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2016 Bartosz Kostrzewa
+ *   Copyright (C) 2017 Bartosz Kostrzewa
  *
  *   This file is part of ising, a simple simultion code for the
  *   2D Ising model.
@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
 
   input_t setup;
   lattice_t lat;
+  lattice_t lat_temp;
 
-  parse_args(argc,argv,&setup,INPUT_MODE_MC);
+  parse_args(argc,argv,&setup,INPUT_MODE_SYM);
   
   if(setup.seed == 0){
     printf("!! No RNG seed provided, seeding from time!\n");
@@ -53,10 +54,14 @@ int main(int argc, char** argv) {
   rlxd_init(2,setup.seed);
 
   init(&lat,&setup);
+  init(&lat_temp,&setup);
 
-  FILE* ofile = fopen(setup.ofilename,"w");
+  lattice_copy(&lat_temp, &lat);
+
+  // TODO: smart filenme
+  FILE* ofile = fopen("output.data","w");
   if( (void*)ofile == NULL ){
-    printf("There was an error opening the output file '%s' for writing!\n",setup.ofilename);
+    printf("There was an error opening the output file for writing!\n");
     exit(1);
   }
 
@@ -65,37 +70,40 @@ int main(int argc, char** argv) {
   double eperspin, magnetisation;
   int sweepsize;
   for(int n = 0; n < setup.nsweeps; ++n){
-    sweepsize = lat.sweep(&lat);
+    sweepsize = lat.Lsq;
     eperspin = H(&lat)/(lat.Lsq);
     magnetisation = M(&lat);
    
     fprintf(ofile,"%012d %.10e %.10e %012d\n",n,eperspin,fabs(magnetisation),sweepsize);
 
-    if(setup.visual==1){
-      clear();
-      drawconf(&lat);
-      if(setup.plotenergy==1) plotenergy(eperspin,&lat);
-      move(0,0);
-      printw("Temperature: %.4e  Sweep: %d  Energy per spin: %.4e",lat.temp,n,eperspin);
-      move(1,0);
-      printw("Magnetisation: %.4e",fabs(magnetisation));
-      refresh();
-      if(setup.iterate==1){
-        getch();
-      } else {
-        usleep(20000);
-      }
+    clear();
+    drawconf(&lat);
+    if(setup.plotenergy==1) plotenergy(eperspin,&lat);
+    move(0,0);
+    printw("Temperature: %.4e  Sweep: %d  Energy per spin: %.4e",lat.temp,n,eperspin);
+    move(1,0);
+    printw("Magnetisation: %.4e",fabs(magnetisation));
+
+    move(1,27);
+    if( n < 20 ){
+      lattice_translation(&lat, &lat_temp, -1, -1);
+      printw("Symmetry: Translation by (1,1)");
+    } else if(n < 40){ 
+      lattice_90deg_rotation(&lat, &lat_temp);
+      printw("Symmetry: Rotation by 90deg");
+    } else {
+      lattice_reflection(&lat, &lat_temp);
+      printw("Symmetry: reflection along diagonal");
     }
-    if(setup.algo == 's' && n == setup.ntherm && setup.visual == 1) getch();
-    //if(setup->algo && n > ntherm){
-      //T=Ts/log((float)(n-ntherm)*3);
-    //  T=0.1+Ts*exp(-(float)(n-ntherm)/20.0);
-    //}
+    lattice_copy(&lat_temp, &lat);
+
+    refresh();
+    getch();
   }
   
   if(setup.visual==1) {
     move(1,27);
-    printw("PRESS ANY KEY TO EXIT PROGRAM");
+    printw("PRESS ANY KEY TO EXIT PROGRAM                    ");
     getch();
     endwin();
   }
