@@ -8,3 +8,5 @@ extern inline void lattice_translation(lattice_t * const dst, lattice_t const * 
                                        const int shiftx, const int shifty);
 extern inline void lattice_90deg_rotation(lattice_t * const dst, lattice_t const * const src);
 extern inline void lattice_reflection(lattice_t * const dst, lattice_t const * const src);
+extern inline void lattice_spinflip(lattice_t * const dst, lattice_t const * const src);
+

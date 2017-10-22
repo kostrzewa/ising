@@ -114,5 +114,10 @@ inline void lattice_reflection(lattice_t * const dst, lattice_t const * const sr
   }
 }
 
+inline void lattice_spinflip(lattice_t * const dst, lattice_t const * const src){
+  for( int i = 0; i < dst->Lsq; i++ ){
+    dst->spinsmem[i] = -src->spinsmem[i];
+  }
+}
 
 #endif

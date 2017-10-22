@@ -87,13 +87,16 @@ int main(int argc, char** argv) {
     move(1,27);
     if( n < 20 ){
       lattice_translation(&lat, &lat_temp, -1, -1);
-      printw("Symmetry: Translation by (1,1)");
+      printw("Symmetry: Translation by (1,1)        ");
     } else if(n < 40){ 
       lattice_90deg_rotation(&lat, &lat_temp);
-      printw("Symmetry: Rotation by 90deg");
-    } else {
+      printw("Symmetry: Rotation by 90deg           ");
+    } else if(n < 60){
       lattice_reflection(&lat, &lat_temp);
-      printw("Symmetry: reflection along diagonal");
+      printw("Symmetry: reflection along diagonal   ");
+    } else if(n < 80){
+      lattice_spinflip(&lat, &lat_temp);
+      printw("Symmetry: global spin flip            ");
     }
     lattice_copy(&lat_temp, &lat);
 

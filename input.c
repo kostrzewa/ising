@@ -101,7 +101,7 @@ void parse_args(int argc, char** argv, input_t * const setup, const input_mode_t
   if(imode == INPUT_MODE_SYM){
     setup->visual = 1;
     setup->iterate = 1;
-    setup->nsweeps = 60;
+    setup->nsweeps = 80;
     setup->coldstart = 0;
     setup->plotenergy = 1;
   }
