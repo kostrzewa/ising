@@ -1,0 +1,10 @@
+// inline functions in the hope of increasing speed
+extern inline void shiftm(const int in, int * const out, const lattice_t * const lat);
+extern inline void shiftp(const int in, int * const out, const lattice_t * const lat);
+extern inline void shiftn(const int in, int * const out, const lattice_t * const lat, const int shift);
+
+extern inline void lattice_copy(lattice_t * const dst, lattice_t const * const src);
+extern inline void lattice_translation(lattice_t * const dst, lattice_t const * const src,
+                                       const int shiftx, const int shifty);
+extern inline void lattice_90deg_rotation(lattice_t * const dst, lattice_t const * const src);
+extern inline void lattice_reflection(lattice_t * const dst, lattice_t const * const src);
