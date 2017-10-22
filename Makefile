@@ -5,7 +5,7 @@ LDFLAGS := -L/usr/lib/ -lm -lncurses
 IDIRS := /usr/include/ncursesw .
 
 CC=gcc
-CFLAGS=-std=c99 -O3 -mtune=core2 -march=core2 -fopenmp -pg -g -ggdb
+CFLAGS=-std=c99 -O3 -mtune=core2 -march=core2 -fopenmp
 
 all: ${PGMS}
 
