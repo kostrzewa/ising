@@ -23,6 +23,8 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#define FNL 200
+
 typedef struct input_t {
   int L;
   double J;
@@ -35,11 +37,17 @@ typedef struct input_t {
   int coldstart;
   int plotenergy;
   int iterate;
+  char ofilename[FNL];
 } input_t; 
+
+typedef enum input_mode_t {
+  INPUT_MODE_MC=0,
+  INPUT_MODE_SYM
+} input_mode_t;
 
 #include "lattice.h"
 
-void parse_args(int argc, char** argv, input_t * const setup);
-void usage();
+void parse_args(int argc, char** argv, input_t * const setup, const input_mode_t imode);
+void usage(const input_mode_t imode);
 
 #endif

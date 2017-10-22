@@ -30,9 +30,8 @@
 #include "cluster.h"
 #include "input.h"
 
-// inline functions in the hope of increasing speed
-extern inline void shiftm(const int in, int * const out, const lattice_t * const lat);
-extern inline void shiftp(const int in, int * const out, const lattice_t * const lat);
+#include "lattice_inlinedefs.ih"
+
 
 double H(const lattice_t * const lat){
   int h = 0;
@@ -71,11 +70,18 @@ double singleflip_deltaH(const int xflip, const int yflip, const lattice_t * con
 }
 
 void init(lattice_t * const lat, input_t * const setup){
+  lat->setup = *(setup);
   lat->L = setup->L;
   lat->Lsq = setup->L*setup->L;
   lat->J = setup->J;
   lat->temp = setup->temp;
   switch(setup->algo){
+    case 'n':
+      lat->sweep = null_sweep;
+      break;
+    case 'r':
+      lat->sweep = random_sweep;
+      break;
     case 'm':
       lat->sweep = metropolis_sweep;
       break;
@@ -88,6 +94,11 @@ void init(lattice_t * const lat, input_t * const setup){
       exit(ERROR_INIT_ALGO);
       break;
   }
+
+  lat->spinsmem = NULL;
+  lat->spins = NULL;
+  lat->clustermem = NULL;
+  lat->cluster = NULL;
 
   // allocate memory for lattice and cluster                                                                                                                                       
   lat->spinsmem = malloc(lat->L*lat->L*sizeof(char));
@@ -114,10 +125,26 @@ void init(lattice_t * const lat, input_t * const setup){
     lat->cluster = NULL;
   }
 
-  if(setup->coldstart){
-    for(int i = 0; i< lat->Lsq; ++i){ 
+  start(lat, setup->coldstart);
+
+  lat->init = 1;
+}
+
+void start(lattice_t * const lat, const int coldstart){
+  if(coldstart){
+    for(int i = 0; i < lat->Lsq; ++i){
       lat->spinsmem[i] = -1;
     }
+    // test code for symmetries
+    //for(int x = 0; x < lat->L; ++x){
+    //  for(int y = 0; y < lat->L; y++){
+    //    if( x == y ){
+    //      lat->spins[x][y] = -1;
+    //    }else{
+    //      lat->spins[x][y] = 1;
+    //    }
+    //  }
+    //}
   } else {
     double* rans = malloc(lat->Lsq*sizeof(double));
     ranlxd(rans,lat->Lsq);
@@ -125,8 +152,15 @@ void init(lattice_t * const lat, input_t * const setup){
       lat->spinsmem[i] = rans[i] > 0.5 ? 1 : -1;
     free(rans);
   }
+}
 
-  lat->init = 1;
+int null_sweep(lattice_t * const lat){
+  return 0;
+}
+
+int random_sweep(lattice_t * const lat){
+  start(lat, 0);
+  return lat->Lsq;
 }
 
 void finalize(lattice_t * const lat) {

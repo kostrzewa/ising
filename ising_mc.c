@@ -35,15 +35,12 @@
 #include "visual.h"
 #include "input.h"
 
-#define FNL 200
-
-
 int main(int argc, char** argv) {
 
   input_t setup;
   lattice_t lat;
 
-  parse_args(argc,argv,&setup);
+  parse_args(argc,argv,&setup,INPUT_MODE_MC);
   
   if(setup.seed == 0){
     printf("!! No RNG seed provided, seeding from time!\n");
@@ -57,10 +54,9 @@ int main(int argc, char** argv) {
 
   init(&lat,&setup);
 
-  // TODO: smart filenme
-  FILE* ofile = fopen("output.data","w");
+  FILE* ofile = fopen(setup.ofilename,"w");
   if( (void*)ofile == NULL ){
-    printf("There was an error opening the output file for writing!\n");
+    printf("There was an error opening the output file '%s' for writing!\n",setup.ofilename);
     exit(1);
   }
 

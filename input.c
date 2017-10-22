@@ -24,11 +24,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <string.h>
 
 #include "input.h"
 #include "errors.h"
 
-void parse_args(int argc, char** argv, input_t * const setup){
+void parse_args(int argc, char** argv, input_t * const setup, const input_mode_t imode){
   setup->seed = 0;
   setup->L = 0;
   setup->temp = 0;
@@ -40,12 +41,13 @@ void parse_args(int argc, char** argv, input_t * const setup){
   setup->plotenergy = 0;
   setup->coldstart = 0;
   setup->iterate = 0;
+  strncpy(setup->ofilename, "output.data", FNL);
 
   int c;
   // if you have never worked with getopt, the argument value is written into
   // the global string 'optarg' managed by getopt
   // an argument followed with a colon has a value, otherwise it's just a flag
-  while((c = getopt(argc, argv, "h?vceiJ:L:T:a:t:n:s:")) != -1) {
+  while((c = getopt(argc, argv, "h?vceiJ:L:T:a:t:n:s:o:")) != -1) {
     switch(c) {
       case 'L':
         setup->L = atoi(optarg);
@@ -57,12 +59,14 @@ void parse_args(int argc, char** argv, input_t * const setup){
         setup->J = atof(optarg);
         break;
       case 'a':
-        if( optarg[0] == 'm' || optarg[0] == 'c' || optarg[0] == 's' ){
-          setup->algo = optarg[0];
-        } else {
-          printf("%s is not a valid algorithm!\n",optarg);
-          usage();
-          exit(ERROR_INPUT_ALGO);
+        if(imode == INPUT_MODE_MC){
+          if( optarg[0] == 'm' || optarg[0] == 'c' || optarg[0] == 's' || optarg[0] == 'r' ){
+            setup->algo = optarg[0];
+          } else {
+            printf("%s is not a valid algorithm!\n",optarg);
+            usage(imode);
+            exit(ERROR_INPUT_ALGO);
+          }
         }
         break;
       case 'n':
@@ -83,51 +87,87 @@ void parse_args(int argc, char** argv, input_t * const setup){
       case 'c':
         setup->coldstart = 1;
         break;
+      case 'o':
+        strncpy(setup->ofilename, optarg, FNL);
+        break;
       case 'h':
       case '?':
       default:
-        usage();
+        usage(imode);
         break;
     }
   }
+
+  if(imode == INPUT_MODE_SYM){
+    setup->visual = 1;
+    setup->iterate = 1;
+    setup->nsweeps = 60;
+    setup->coldstart = 0;
+    setup->plotenergy = 1;
+  }
+
   // do some sanity checks
   if( setup->L <= 0 ){
     printf("%d is not a valid lattice size!\n",setup->L);
-    usage();
+    usage(imode);
     exit(ERROR_INPUT_ARGC);
   }
-  if( setup->nsweeps <= 0 ){
-    printf("%d is not a valid number of sweeps!\n",setup->nsweeps);
-    usage();
-    exit(ERROR_INPUT_ARGC);
-  }
-  if( setup->ntherm < 0 || setup->ntherm >= setup->nsweeps ){
-    printf("%d is not a valid number of thermalisation sweeps!\n",setup->ntherm);
-    usage();
+  if( setup->temp < 0 ){
+    printf("%lf is not a valid temperature!\n",setup->temp);
+    usage(imode);
     exit(ERROR_INPUT_ARGC);
   }
   if( setup->seed < 0 ){
     printf("%d is not a valid RNG seed!\n",setup->seed);
-    usage();
+    usage(imode);
     exit(ERROR_INPUT_ARGC);
+  }
+
+  if(imode == INPUT_MODE_MC){
+    if( setup->algo == 'n' ){
+      printf("You must specify an algorithm for Monte Carlo!\n");
+      usage(imode);
+      exit(ERROR_INPUT_ARGC);
+    }
+    if( setup->nsweeps <= 0 ){
+      printf("%d is not a valid number of sweeps!\n",setup->nsweeps);
+      usage(imode);
+      exit(ERROR_INPUT_ARGC);
+    }
+    if( setup->ntherm < 0 || setup->ntherm >= setup->nsweeps ){
+      printf("%d is not a valid number of thermalisation sweeps!\n",setup->ntherm);
+      usage(imode);
+      exit(ERROR_INPUT_ARGC);
+    }
   }
 }
 
-void usage() {
-  printf("'ising' command line arguments\n");
-  printf("./ising -L<L> -J<J> -T<T> -a<a> -n<n> [-t<t>] [-s<s>] [-c] [-v] [-e] [-i]\n");
+void usage(const input_mode_t imode) {
+  if(imode == INPUT_MODE_MC){
+    printf("'ising_mc' command line arguments\n");
+    printf("./ising_mc -L<L> -J<J> -T<T> -a<a> -n<n> [-o<o>] [-t<t>] [-s<s>] [-c] [-v] [-e] [-i]\n");
+  } else if( imode == INPUT_MODE_SYM ){
+    printf("'ising_sym' command line arguments\n");
+    printf("./ising_sym -L<L> -J<J> -T<T> [-o<o>]\n");
+  }
   printf("MANDATORY ARGUMENTS\n");
   printf("<L> lattize size [integer]\n");
   printf("<J> spin coupling [decimal]\n");
   printf("<T> (starting) temperature [decimal]\n");
-  printf("<a> algorithm: (c)luster (m)etropolis (s)imulated annealing\n"); 
-  printf("<n> total number of sweeps [integer]\n");
-  printf("OPTIONAL ARGUMENTS\n");
-  printf("<t> thermalistion sweeps for simulated annealing [integer < n ]\n");
+  if(imode == INPUT_MODE_MC){
+    printf("<a> algorithm: (r)andom sampling, (c)luster, (m)etropolis, (s)imulated annealing\n"); 
+    printf("<n> total number of sweeps [integer]\n");
+    printf("OPTIONAL ARGUMENTS\n");
+    printf("<o> output filename [character string, default 'output.data']\n");
+    printf("<t> thermalistion sweeps for simulated annealing [integer < n ]\n");
+    printf("-v enable visualisation (and slow down simulation)\n");
+    printf("-e enable plotting of energy history in visualisation\n");
+    printf("-i interactively iterate through simulation (when visualisation is enabled)\n");
+  }else{
+    printf("OPTIONAL ARGUMENTS\n");
+    printf("<o> output filename [character string, default 'output.data']\n");
+  }
   printf("<s> RNG seed [integer]\n");
   printf("-c cold start (all spins aligned)\n");
-  printf("-v enable visualisation (and slow down simulation)\n");
-  printf("-e enable plotting of energy history in visualisation\n");
-  printf("-i interactively iterate through simulation (when visualisation is enabled)\n");
 }
  
