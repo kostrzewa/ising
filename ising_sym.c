@@ -58,10 +58,9 @@ int main(int argc, char** argv) {
 
   lattice_copy(&lat_temp, &lat);
 
-  // TODO: smart filenme
-  FILE* ofile = fopen("output.data","w");
+  FILE* ofile = fopen(setup.ofilename,"w");
   if( (void*)ofile == NULL ){
-    printf("There was an error opening the output file for writing!\n");
+    printf("There was an error opening the output file '%s' for writing!\n",setup.ofilename);
     exit(1);
   }
 
