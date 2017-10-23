@@ -86,16 +86,16 @@ int main(int argc, char** argv) {
     move(1,27);
     if( n < 20 ){
       lattice_translation(&lat, &lat_temp, -1, -1);
-      printw("Symmetry: Translation by (1,1)        ");
+      printw("Symmetry: Translation by (1,1)       (press any key to advance)");
     } else if(n < 40){ 
       lattice_90deg_rotation(&lat, &lat_temp);
-      printw("Symmetry: Rotation by 90deg           ");
+      printw("Symmetry: Rotation by 90deg          (press any key to advance)");
     } else if(n < 60){
       lattice_reflection(&lat, &lat_temp);
-      printw("Symmetry: reflection along diagonal   ");
+      printw("Symmetry: reflection along diagonal  (press any key to advance)");
     } else if(n < 80){
       lattice_spinflip(&lat, &lat_temp);
-      printw("Symmetry: global spin flip            ");
+      printw("Symmetry: global spin flip           (press any key to advance)");
     }
     lattice_copy(&lat_temp, &lat);
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
   
   if(setup.visual==1) {
     move(1,27);
-    printw("PRESS ANY KEY TO EXIT PROGRAM                    ");
+    printw("PRESS ANY KEY TO EXIT PROGRAM                                       ");
     getch();
     endwin();
   }
