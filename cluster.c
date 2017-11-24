@@ -27,19 +27,19 @@
 #include <stdio.h>
 
 #include "cluster.h"
-#include "ranlxd.h"
+#include "ranlxs.h"
 #include "lattice.h"
 
 int cluster_sweep(lattice_t * const lat){
   int xseed, yseed, clustersize;
-  double seedran[2];
+  float seedran[2];
  
   // reset the cluster
   for(int i = 0; i < lat->Lsq; ++i){
     lat->clustermem[i] = CLUSTER_UNCHECKED;
   }
   // pick a seed point
-  ranlxd(seedran,2);
+  ranlxs(seedran,2);
   xseed = (int)(seedran[0]*(lat->L));
   yseed = (int)(seedran[1]*(lat->L));
 
@@ -66,7 +66,7 @@ void check_neighbours(const int x, const int y, lattice_t * const lat){
 
   neighbour_t n[4];
   int xm1, xp1, ym1, yp1;
-  double test;
+  float test;
   shiftm(x,&xm1,lat);
   shiftm(y,&ym1,lat);
   shiftp(x,&xp1,lat);
@@ -82,7 +82,7 @@ void check_neighbours(const int x, const int y, lattice_t * const lat){
     // if a neighbour has not yet been visited, see if it is parallel
     if( lat->cluster[ n[i].x ][ n[i].y ] == CLUSTER_UNCHECKED ){
       // and add with Wolff probability
-      ranlxd(&test,1);
+      ranlxs(&test,1);
       if( lat->spins[ n[i].x ][ n[i].y ] == lat->spins[x][y] && (1.0-exp(-2*lat->J/lat->temp)) > test ){
         lat->cluster[ n[i].x ][ n[i].y ] = CLUSTER_RECURSE;
       }

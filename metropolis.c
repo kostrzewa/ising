@@ -24,19 +24,19 @@
 #include <math.h>
 
 #include "metropolis.h"
-#include "ranlxd.h"
+#include "ranlxs.h"
 #include "lattice.h"
 
 int metropolis_sweep(lattice_t * const lat){
   int xflip, yflip, acceptedflips;
-  double e, deltae, test;
-  double ranflip[2];
+  double e, deltae;
+  float ranflip[2], test;
   acceptedflips = 0;
   for(int i = 0; i < lat->Lsq; ++i){
-    ranlxd(ranflip,2);
+    ranlxs(ranflip,2);
     xflip = (int)(ranflip[0]*lat->L);
     yflip = (int)(ranflip[1]*lat->L);
-    ranlxd(&test,1);
+    ranlxs(&test,1);
     deltae = singleflip_deltaH(xflip,yflip,lat);
     // accept or reject spin flip
     if( exp( -((double)(deltae))/lat->temp ) > test ){

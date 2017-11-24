@@ -28,7 +28,7 @@
 #include <math.h>
 #include <ncurses.h>
 
-#include "ranlxd.h"
+#include "ranlxs.h"
 #include "lattice.h"
 #include "metropolis.h"
 #include "cluster.h"
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   }
   
   srand(setup.seed);
-  rlxd_init(2,setup.seed);
+  rlxs_init(2,setup.seed);
 
   init(&lat,&setup);
 

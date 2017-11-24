@@ -25,7 +25,7 @@
 
 #include "lattice.h"
 
-#include "ranlxd.h"
+#include "ranlxs.h"
 #include "metropolis.h"
 #include "cluster.h"
 #include "input.h"
@@ -146,8 +146,8 @@ void start(lattice_t * const lat, const int coldstart){
     //  }
     //}
   } else {
-    double* rans = malloc(lat->Lsq*sizeof(double));
-    ranlxd(rans,lat->Lsq);
+    float* rans = malloc(lat->Lsq*sizeof(float));
+    ranlxs(rans,lat->Lsq);
     for(int i = 0; i < lat->Lsq; ++i)
       lat->spinsmem[i] = rans[i] > 0.5 ? 1 : -1;
     free(rans);
